@@ -1,5 +1,4 @@
 """Source-package checks that do not fit the machine-learning models."""
-import gzip
 import ast
 import subprocess
 import sys
@@ -10,10 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 
 class SourcePackageChecks(unittest.TestCase):
-    def test_packed_feature_engineering_source(self):
-        source = gzip.decompress(
-            (SCRIPTS / "02_feature_engineering_sensitivity.py.gz").read_bytes()
-        ).decode("utf-8")
+    def test_feature_engineering_source(self):
+        source = (SCRIPTS / "02_feature_engineering_sensitivity.py").read_text(encoding="utf-8")
         ast.parse(source)
         self.assertIn("RANDOM_SEEDS = list(range(20))", source)
 

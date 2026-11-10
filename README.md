@@ -12,8 +12,6 @@ Its `Model_Ready_Data` worksheet contains the variables used by the scripts;
 `Column_Dictionary` describes their meanings. Source publication identifiers and
 experimental reporting descriptors are included for traceability.
 
-The feature-engineering analysis uses a losslessly compressed Python source file. Its launcher runs it directly; the source can also be inspected with `gzip -dc scripts/02_feature_engineering_sensitivity.py.gz`.
-
 The article's Supplementary Data S1 provides the reader-facing experimental dataset,
 including original and closed observed yields and reference leave-one-study-out
 predictions. **The repository contains input data and code, not precomputed results.**
