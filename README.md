@@ -1,62 +1,110 @@
 # Reporting-aware prediction of biomass pyrolysis product yields
 
-This repository provides the model-ready dataset and essential Python analysis code supporting the research article **Reporting-aware prediction of biomass pyrolysis product yields under mass-closure constraints**.
+This repository provides the literature-derived input dataset, Python analysis scripts,
+software requirements and run instructions for the research article
+*Reporting-aware prediction of biomass pyrolysis product yields under mass-closure constraints*.
 
-**Please cite the associated research article when using the dataset, methods, or scientific findings.** The article remains the primary reference for scientific results and their interpretation. Full bibliographic information will be linked here when available. Software attribution is given in [CITATION.cff](CITATION.cff).
+## Input dataset
 
-## Dataset
+`data/model_ready_dataset.xlsx` contains 442 experimental observations from 42 fixed-bed
+pyrolysis studies, organized into 69 study–feedstock–composition validation groups.
+Its `Model_Ready_Data` worksheet contains the variables used by the scripts;
+`Column_Dictionary` describes their meanings. Source publication identifiers and
+experimental reporting descriptors are included for traceability.
 
-`data/model_ready_dataset.xlsx` contains 442 observations from 42 published fixed-bed pyrolysis studies, organized into 69 study–feedstock–composition groups. The workbook provides the `Model_Ready_Data` sheet for calculations and variable definitions in `Column_Dictionary`.
+The feature-engineering analysis uses a losslessly compressed Python source file. Its launcher runs it directly; the source can also be inspected with `gzip -dc scripts/02_feature_engineering_sensitivity.py.gz`.
 
-Publication identifiers and validation-group assignments are retained for traceability. The published studies use heterogeneous yield definitions and measurement conventions; predictions should not be interpreted as independent prospective experimental validation.
+The article's Supplementary Data S1 provides the reader-facing experimental dataset,
+including original and closed observed yields and reference leave-one-study-out
+predictions. **The repository contains input data and code, not precomputed results.**
 
-## Run analyses
+## Requirements and setup
 
-The reference analysis was run with Python 3.13.0. `requirements.txt` pins the direct package versions from that environment; results may vary on other platforms or dependency builds.
+The reference environment used Python 3.13.0. Direct Python package requirements
+are listed in `requirements.txt`.
 
 ```bash
 python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
+# Linux/macOS: source .venv/bin/activate
 python -m pip install -r requirements.txt
-```
-
-Validate the dataset and run preflight tests:
-
-```bash
 python scripts/00_validate_dataset.py
 python -m unittest discover -s tests -v
 ```
 
-Run the analyses in dependency order:
+## Reproduce the analyses
+
+Run the standard workflow from the repository root:
 
 ```bash
 python run_all.py
 ```
 
-Or select specific steps:
+Or choose steps, for example:
 
 ```bash
-python run_all.py --only 00,04,06b
+python run_all.py --only 00,02,04
 ```
 
-The grouped feature-ablation step (`06b`) uses the validation splits created by step `04`; run the latter first. Outputs are written to `outputs/` locally and are not tracked by Git. Some analyses require substantial computation.
+The grouped feature-ablation analysis (06b) and the study-level audit (10) use
+results produced by step 04; run step 04 first. Some full analyses are computationally
+expensive. Generated results are written to the local `outputs/` directory and are
+excluded from version control.
 
-The package supports dataset validation, model screening, product-specific prediction, random-row and grouped validation, leave-one-study-out assessment, feature attribution, reporting-feature ablation, model comparison and sensitivity to optional process variables. The article and its supporting information contain the full scientific results, figures and interpretation. No model outputs, diagnostic workbooks or generated figures are included in this repository.
+| Step | Analysis |
+|---|---|
+| 00 | Input validation and dataset checks |
+| 01 | Model and target-handling screen (Table 1) |
+| 02 | Feature-engineering sensitivity (Supplementary Table S3) |
+| 03 | Product-specific cross-validation (Fig. 2) |
+| 04 | Random-row, grouped and leave-one-study-out validation (Fig. 3) |
+| 05 | Feature importance (Fig. 4) |
+| 06a, 06b | Feature-group ablation (Table 2) |
+| 07 | Additional model and target-handling comparisons |
+| 08 | Optional process-detail sensitivity (Supplementary Fig. S1) |
+| 09 | Correlation and collinearity diagnostics (Supplementary Fig. S2) |
+| 10 | Study-level leave-one-study-out diagnostics |
+| 11 | Yield-sum acceptance-window sensitivity (Supplementary Table S4) |
 
-### Harmonized ensemble-model comparison
+### Study-disjoint reporting-descriptor ablation
 
-The matched four-model comparison reported in Supplementary Table S11 is reproduced by `scripts/12_harmonized_model_comparison.py`. It compares XGBoost, ExtraTrees, Random Forest and CatBoost using the reference feature set and identical held-out partitions across models: 20 random-row splits, 20 grouped splits and 42 leave-one-study-out folds.
+Supplementary Table S9 compares three feature sets at seeds 42, 7 and 123,
+using identical study exclusions and model settings. Run:
 
-Run this computationally intensive analysis separately from `run_all.py`:
+```bash
+python scripts/13_study_disjoint_reporting_ablation.py --smoke
+python scripts/13_study_disjoint_reporting_ablation.py
+```
+
+The `--smoke` option exercises a single study holdout without writing results.
+The complete run compares the full predictor set, a predictor set excluding two
+composition sums, and one further excluding seven reporting/basis categories
+while retaining the pyrolysis-regime descriptor. The final contrast is
+conditional on removing the composition sums.
+
+### Four-model comparison
+
+Supplementary Table S10 compares XGBoost, ExtraTrees, Random Forest and
+CatBoost under the same reference predictors and validation partitions:
 
 ```bash
 python scripts/12_harmonized_model_comparison.py --smoke
 python scripts/12_harmonized_model_comparison.py
 ```
 
-The smoke test only verifies the execution path; its results are not comparable to the full analysis. The full run writes split-level results, summary metrics and checks against the reference XGBoost validation to `outputs/`, which is excluded from Git.
+The smoke test checks execution, not published performance values.
+Run the complete comparison separately from `run_all.py`.
 
-## Use and attribution
+## Interpretation and reuse
 
-Source publication identifiers, model settings, split definitions and evaluation procedures are retained to support reproducibility. No license is granted solely by making the repository public; reuse of compiled source data may depend on rights associated with the original publications.
+Predicted product fractions are normalized to 100 wt.% in the closure-aware
+analyses. This does not correct incomplete physical mass recovery in source
+experiments. Random-row validation does not constitute independent prospective
+validation. Interpret numerical results using the corresponding feature set,
+target treatment and validation design in the manuscript and Supplementary
+Information.
+
+Scripts create their own outputs; no generated model results, plots, diagnostic
+workbooks or temporary files are distributed in this repository. Publication
+citations are listed in the manuscript. Public availability does not by itself
+grant a reuse license for materials drawn from source publications.
