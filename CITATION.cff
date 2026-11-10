@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "Please cite the associated research article for scientific findings; cite this repository separately when reusing its code. Article bibliographic details will be provided when available."
+type: software
+title: "Analysis code for reporting-aware prediction of biomass pyrolysis product yields"
+version: 1.0.0
+authors:
+  - family-names: Workie
+    given-names: Endashaw
+  - family-names: Özbay
+    given-names: Günay
+  - family-names: Halim
+    given-names: Ronald
+  - family-names: da Costa
+    given-names: Tamíris
