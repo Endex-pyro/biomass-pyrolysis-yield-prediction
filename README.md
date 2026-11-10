@@ -12,9 +12,9 @@ Its `Model_Ready_Data` worksheet contains the variables used by the scripts;
 `Column_Dictionary` describes their meanings. Source publication identifiers and
 experimental reporting descriptors are included for traceability.
 
-The article's Supplementary Data S1 provides the reader-facing experimental dataset,
-including original and closed observed yields and reference leave-one-study-out
-predictions. **The repository contains input data and code, not precomputed results.**
+The accompanying Supplementary Data workbook contains the source-linked
+experimental records, original and closed observed yields, and leave-one-study-out
+predictions.
 
 ## Requirements and setup
 
@@ -45,9 +45,7 @@ python run_all.py --only 00,02,04
 ```
 
 The grouped feature-ablation analysis (06b) and the study-level audit (10) use
-results produced by step 04; run step 04 first. Some full analyses are computationally
-expensive. Generated results are written to the local `outputs/` directory and are
-excluded from version control.
+results produced by step 04; run step 04 first. Some full analyses are computationally expensive.
 
 | Step | Analysis |
 |---|---|
@@ -59,7 +57,7 @@ excluded from version control.
 | 05 | Feature importance (Fig. 4) |
 | 06a, 06b | Feature-group ablation (Table 2) |
 | 07 | Additional model and target-handling comparisons |
-| 08 | Optional process-detail sensitivity (Supplementary Fig. S1) |
+| 08 | Process-detail sensitivity (Supplementary Fig. S1) |
 | 09 | Correlation and collinearity diagnostics (Supplementary Fig. S2) |
 | 10 | Study-level leave-one-study-out diagnostics |
 | 11 | Yield-sum acceptance-window sensitivity (Supplementary Table S4) |
@@ -74,7 +72,7 @@ python scripts/13_study_disjoint_reporting_ablation.py --smoke
 python scripts/13_study_disjoint_reporting_ablation.py
 ```
 
-The `--smoke` option exercises a single study holdout without writing results.
+The `--smoke` option checks execution using a single study holdout.
 The complete run compares the full predictor set, a predictor set excluding two
 composition sums, and one further excluding seven reporting/basis categories
 while retaining the pyrolysis-regime descriptor. The final contrast is
@@ -90,7 +88,7 @@ python scripts/12_harmonized_model_comparison.py --smoke
 python scripts/12_harmonized_model_comparison.py
 ```
 
-The smoke test checks execution, not published performance values.
+The smoke test checks execution.
 Run the complete comparison separately from `run_all.py`.
 
 ## Interpretation and reuse
@@ -102,7 +100,5 @@ validation. Interpret numerical results using the corresponding feature set,
 target treatment and validation design in the manuscript and Supplementary
 Information.
 
-Scripts create their own outputs; no generated model results, plots, diagnostic
-workbooks or temporary files are distributed in this repository. Publication
-citations are listed in the manuscript. Public availability does not by itself
-grant a reuse license for materials drawn from source publications.
+Publication citations are listed in the manuscript. Reuse of extracted source data
+remains subject to rights associated with the original publications.
